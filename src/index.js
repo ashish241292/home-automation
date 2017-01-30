@@ -8,7 +8,11 @@ import api from './api';
 import config from './config.json';
 
 let app = express();
+
 app.server = http.createServer(app);
+
+let io;
+io = require('socket.io')(app.server);
 
 // 3rd party middleware
 app.use(cors({
@@ -18,6 +22,20 @@ app.use(cors({
 app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
+
+io.on('connection', function(socket){
+    console.log('pi-server-connected : OK!');
+    socket.on('hello', function(msg){
+        console.log('message recived from pi :-> ' + msg);
+    });
+    socket.on('ebulb', function(msg){
+        console.log('message recived from pi :-> ' + msg);
+    });
+		socket.on('disconnect', function(){
+    		console.log('Pi got disconnected! no.. ):');
+  	});
+
+});
 
 // connect to db
 initializeDb( db => {
@@ -30,7 +48,8 @@ initializeDb( db => {
 
 	app.server.listen(process.env.PORT || config.port);
 
-	console.log(`Started on port ${app.server.address().port}`);
+	console.log(`Magic happens on port ${app.server.address().port}`);
+
 });
 
 export default app;
