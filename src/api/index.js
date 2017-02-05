@@ -15,7 +15,7 @@ export default ({ config, db }) => {
 	api.get('/bulb/:state', (req, res) => {
 				console.log("ebulb","=>user=> Hello electric bulb set to "+ req.params.state);
         socket.emit("ebulb", req.params.state);
-        res.json({version});
+        res.json({status: req.params.state});
 	});
 
 	return api;
